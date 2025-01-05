@@ -12,7 +12,7 @@
     "build": "npm run clean && npm run build:nest && npm run build:svelte",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
-    "start:dev": "nest start --watch",
+    "start:dev": "npm-run-all --parallel dev:nest dev:svelte:client dev:svelte:server",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
@@ -22,8 +22,9 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "dev:nest": "nest start --watch",
-    "dev:svelte": "vite build --watch",
-    "dev": "npm-run-all --parallel dev:nest dev:svelte"
+    "dev:svelte:client": "vite build --watch",
+    "dev:svelte:server": "vite build --mode ssr --watch",
+    "dev": "npm-run-all --parallel dev:nest dev:svelte:client dev:svelte:server"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",

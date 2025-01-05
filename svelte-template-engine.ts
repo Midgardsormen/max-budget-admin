@@ -1,4 +1,3 @@
-// svelte-template-engine.ts
 import { join, basename } from 'path';
 import { NextFunction } from 'express';
 
@@ -6,24 +5,29 @@ type RenderCallback = (err: Error | null, rendered?: string) => void;
 
 export function svelteTemplateEngine(filePath: string, options: any, callback: RenderCallback) {
   try {
-    // 1) Déterminer le nom du template (ex. "Home")
     const templateName = basename(filePath, '.svelte');
-    
-    // 2) Charger le fichier compilé (ex. "dist/views/Home.js")
-    const compiledPath = join(process.cwd(), 'dist', 'views', `${templateName}.js`);
+    const compiledPath = join(process.cwd(), 'dist', 'server', `${templateName}.js`);
     const Component = require(compiledPath);
 
-    // 3) Créer un "payload" vide
     const $$payload = { out: '' };
-
-    // 4) Appeler la fonction exportée (Component), en passant le payload et les props
-    //    Les "props" sont ce que tu retournes dans le @Render() => { message: "Hello" }
     Component($$payload, options);
 
-    // 5) Récupérer le HTML final dans $$payload.out
-    const html = $$payload.out;
+    const html = `
+      <!DOCTYPE html>
+      <html lang="en">
+        <head>
+          <meta charset="UTF-8" />
+          <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+          <title>${templateName}</title>
+          <link rel="stylesheet" href="/assets/assets/home.css" />
+        </head>
+        <body>
+          <div id="app">${$$payload.out}</div>
+          <script type="module" src="/assets/home.js"></script>
+        </body>
+      </html>
+    `;
 
-    // 6) Renvoyer le HTML à Express
     callback(null, html);
   } catch (err) {
     callback(err as Error);

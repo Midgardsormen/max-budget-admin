@@ -11,6 +11,9 @@ async function bootstrap() {
   app.engine('svelte', svelteTemplateEngine);
   app.setViewEngine('svelte');
   app.setBaseViewsDir(join(process.cwd(), 'views'));
+  app.useStaticAssets(join(process.cwd(), 'dist/client'), {
+    prefix: '/assets', // Permet d'accéder aux fichiers statiques via /assets
+  });
   app.useGlobalPipes(new ValidationPipe());
 
   const config = new DocumentBuilder()
